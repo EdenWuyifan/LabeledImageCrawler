@@ -19,7 +19,7 @@ import Worker.Worker;
 
 public class SimpleWebCrawler {
 	private Logger logger = Logger.getLogger(SimpleWebCrawler.class.getName());
-	private int MAX_DEPTH = 20;
+	private int MAX_DEPTH = 5;
 	private int depth = 0;
 
     private Queue<String> links;
