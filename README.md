@@ -2,6 +2,11 @@
 This is a Java-based multi-thread web crawler aims for collect images with certain keywords.
 
 ## How to use
+### Installation
+Please open and run the project on Eclipse.
+To install Eclipse: https://www.eclipse.org/downloads/
+
+### Features
 <img width="740" alt="image" src="https://github.com/EdenWuyifan/LabeledImageCrawler/assets/43869961/6320a4ed-c313-47dc-be7c-6690e383ebc1">
 
 
