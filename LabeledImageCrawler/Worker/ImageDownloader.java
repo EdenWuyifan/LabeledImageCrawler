@@ -13,12 +13,15 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
+import DB.LabeledImage;
+import GUI.LICApp;
 import WebCrawler.SimpleWebCrawler;
+import Server.Server;
 
 public class ImageDownloader {
 	private Logger logger = Logger.getLogger(SimpleWebCrawler.class.getName());
 	private static String path = "./output/";
-	private static int tmpName = 1;
+	private int tmpName = 1;
 	private long timeStamp;
 
 	public ImageDownloader() {}
@@ -28,8 +31,13 @@ public class ImageDownloader {
 	}
 
 	public void downloadImage(String imageUrl) {
+		String savedPath;
 		String imageName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
-		if (!imageName.endsWith(".jpg") && !imageName.endsWith(".png") && !imageName.endsWith(".jpeg") && !imageName.endsWith(".gif")) {
+		if (!imageName.endsWith(".jpg") && !imageName.endsWith(".png")
+				&& !imageName.endsWith(".jpeg") && !imageName.endsWith(".gif")
+				&& !imageUrl.startsWith("https://encrypted-tbn0")
+//				&& !imageUrl.startsWith("data:")
+		) {
 			return;
 		}
 
@@ -38,6 +46,7 @@ public class ImageDownloader {
 		try {
 			InputStream in;
 			if (imageUrl.startsWith("data:")) {
+				System.out.println("We ARE HERE!!!!!!!:" + imageUrl);
 				if (!imageUrl.contains("base64,")) {
 					return;
 				}
@@ -61,19 +70,25 @@ public class ImageDownloader {
 			int n = -1;
 
 //			timeStamp = System.currentTimeMillis() / 1000L;
-			OutputStream os = new FileOutputStream(path + timeStamp + "_" + imageName);
+			savedPath = path + timeStamp + "_" + imageName;
+			OutputStream os = new FileOutputStream(savedPath);
 
 			while ((n = in.read(buffer)) != -1) {
 				os.write(buffer, 0, n);
 			}
 
 			os.close();
+			// Save to DB
+			LabeledImage sqlObj = new LabeledImage(imageName, Server.keyword, imageUrl, savedPath);
+			LICApp.sql.Create(sqlObj);
 
 			logger.log(Level.INFO, "Image saved");
 		} catch (IOException e) {
 			logger.log(Level.SEVERE, "IOException: " + e.getMessage());
 			e.printStackTrace();
 		}
+
+
 	}
 
 	public static void main(String[] args)    {

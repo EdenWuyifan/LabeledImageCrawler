@@ -8,6 +8,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import GUI.LICApp;
 import WebCrawler.SimpleWebCrawler;
 import Worker.Worker;
 
@@ -17,6 +18,7 @@ public class Server {
 	private static final int NUM_OF_WORKERS = 4;
 	private ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(NUM_OF_WORKERS);
 	public static String keyword;
+	public static int resultCount;
 
 
 	// Crawler
@@ -27,7 +29,7 @@ public class Server {
 
 	public Server(String URL, String keyword) {
 		this.URL = URL;
-		String[] keywords = keyword.toLowerCase().split(",");
+		String[] keywords = keyword.toLowerCase().trim().split("\\s*,+\\s*,*\\s*");
 		Server.keyword = String.join("|", keywords);
 	}
 
@@ -41,6 +43,9 @@ public class Server {
 	}
 
 	public void start() throws Exception {
+		if (executor.getActiveCount() != 0) {
+			throw new Exception("Previous crawler is still running, please terminate it first!");
+		}
 		executor.submit(new Worker(URL));
 		crawler = new SimpleWebCrawler(URL, executor, maxDepth);
 		if (crawler == null) {
@@ -50,7 +55,15 @@ public class Server {
 		executor.shutdown();
 		while (!executor.isTerminated()) {}
 		System.out.println("Finished all threads");
+		throw new FinishCrawlException("Current crawl finished!");
 	}
+
+	public void interrupt() {
+    	executor.shutdownNow();
+    	System.out.println("Crawler interrupted");
+		resultCount = 0;
+		LICApp.out.println("Successfully crawled " + resultCount + " images with keyword " + keyword + "~");
+    }
 
 	public static void main(String[] args) throws Exception {
 		Logger.getGlobal().setLevel(Level.WARNING);
