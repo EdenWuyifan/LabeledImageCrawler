@@ -11,7 +11,7 @@ This is a Java-based multi-thread web crawler aims for collect images with certa
 - Start Crawl: start a new crawl job
 - Stop Crawl: interrupt the current crawl
 - View DB: go to the DB view (see below)
-  <img width="600" alt="image" src="https://github.com/EdenWuyifan/LabeledImageCrawler/assets/43869961/7763b872-832b-4689-ad7d-4e31c2474352">
+<img width="600" alt="image" src="https://github.com/EdenWuyifan/LabeledImageCrawler/assets/43869961/7763b872-832b-4689-ad7d-4e31c2474352">
 
 
 ## Live Demo
